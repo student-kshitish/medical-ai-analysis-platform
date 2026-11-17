@@ -1,0 +1,17 @@
+.git
+.venv
+**/.venv
+**/__pycache__
+**/*.pyc
+**/node_modules
+**/dist
+.env
+*.log
+AIML-01/data/raw
+AIML-01/data/extracted
+AIML-01/data/processed/phase2
+AIML-01/data/processed/phase3
+AIML-01/data/processed/phase5
+AIML-01/data/processed/phase7
+AIML-01/data/processed/phase8
+AIML-01/data/processed/phase9

@@ -1,0 +1,55 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libglib2.0-0 \
+    libgl1 \
+    libgomp1 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install CUDA-enabled PyTorch wheels.
+RUN pip install --no-cache-dir \
+    torch==2.11.0+cu128 \
+    torchvision==0.26.0+cu128 \
+    --index-url https://download.pytorch.org/whl/cu128
+
+RUN pip install --no-cache-dir \
+    fastapi==0.163.1 \
+    uvicorn==0.54.0 \
+    monai==1.6.1 \
+    numpy==2.5.4 \
+    pillow==13.0.0 \
+    pandas \
+    matplotlib \
+    opencv-python-headless \
+    pydicom==3.0.2 \
+    nibabel \
+    scikit-learn==1.9.1 \
+    psycopg2-binary==2.9.13 \
+    pydantic==2.14.3 \
+    python-dotenv==1.2.4 \
+    python-multipart==0.0.33 \
+    requests==2.34.2 \
+    SQLAlchemy==2.1.8
+
+COPY AIML-01/ /app/AIML-01/
+COPY AIML-02/phase10_backend.py /app/AIML-02/phase10_backend.py
+COPY AIML-02/phase11_database.py /app/AIML-02/phase11_database.py
+COPY AIML-02/phase13_doctor_review.py /app/AIML-02/phase13_doctor_review.py
+
+RUN mkdir -p \
+    /app/AIML-02/storage/uploads \
+    /app/AIML-02/storage/predictions \
+    /app/artifacts
+
+WORKDIR /app/AIML-02
+
+EXPOSE 8000
+
+CMD ["uvicorn", "phase10_backend:app", "--host", "0.0.0.0", "--port", "8000"]
